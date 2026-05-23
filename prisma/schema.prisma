@@ -9,7 +9,8 @@ generator client {
   output   = "../app/generated/prisma"
 }
 
-// URL is supplied by prisma.config.ts (includes directUrl for Supabase migration compat)
+// Connection URLs are supplied entirely by prisma.config.ts (Prisma v7 convention)
+// url and directUrl are NOT set here — Prisma v7 removed support for them in schema files
 datasource db {
   provider = "postgresql"
 }
