@@ -8,7 +8,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 
 **Current milestone:** Milestone 1 — Concurrency-Safe Reservation Engine v1
 
-**Current phase:** Not started — ready for Phase 1
+**Current phase:** Phase 2 — Reservation API (ready to discuss/plan)
 
 ## Status
 
@@ -20,13 +20,13 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | REQUIREMENTS.md | ✅ Created |
 | ROADMAP.md | ✅ Created |
 | Phase 1 context | ✅ Captured (.planning/phases/01-data-layer/01-CONTEXT.md) |
-| Phase 1 plan | ✅ Written (01-A-PLAN.md, 01-B-PLAN.md, 01-C-PLAN.md) |
+| Phase 1 execution | ✅ Complete (3/3 plans, all verified) |
 
 ## Phase Progress
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | Data Layer — Prisma Schema, Migrations & Seed | 📋 Planned (3 plans) |
+| 1 | Data Layer — Prisma Schema, Migrations & Seed | ✅ Complete |
 | 2 | Reservation API — Concurrency, Idempotency & CRUD | 🔲 Not started |
 | 3 | Expiry Sweeper — Vercel Cron & Reservation Cleanup | 🔲 Not started |
 | 4 | Product Listing UI — Stock Visibility | 🔲 Not started |
@@ -39,7 +39,12 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 - Concurrency: `SELECT FOR UPDATE` in Prisma `$transaction` — NO Redis locking
 - Redis: idempotency keys only
 - Database: Supabase PostgreSQL at `aws-1-ap-south-1.pooler.supabase.com:6543` (pooler) + direct URL in `.env`
-- Phase 1 must set up `directUrl` in `prisma.config.ts` for migrations
+- **Prisma v7 key facts (discovered in Phase 1 execution):**
+  - Client import: `@/app/generated/prisma/client` (NOT `@/app/generated/prisma` or `@prisma/client`)
+  - Constructor requires `adapter: new PrismaPg({ connectionString })` — no URL-only init
+  - Seed config lives in `prisma.config.ts migrations.seed`, NOT `package.json prisma.seed`
+  - Migration URL: use `DIRECT_URL` (port 5432) in `prisma.config.ts datasource.url`; app runtime passes `DATABASE_URL` via `PrismaPg` constructor
+  - `url`/`directUrl` in `schema.prisma` datasource block are removed in v7
 - shadcn/ui not yet installed
 
 ## Decisions Log
@@ -53,4 +58,4 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | Standard granularity (5 phases) | Initialization |
 
 ---
-*Last updated: 2026-05-23 — project initialized*
+*Last updated: 2026-05-24 — Phase 1 complete*

@@ -16,17 +16,29 @@ Concurrency-safe inventory reservation system for ecommerce checkout. Built on N
 
 ## Critical Rules (Read First)
 
-### 1. Prisma v7 — Non-Standard Import Path
+### 1. Prisma v7 — Non-Standard Import Path & Adapter Constructor
 
 The Prisma client is generated to `app/generated/prisma`, NOT `@prisma/client`.
+The entry point is `client.ts` (no `index.ts`) — always import from the `client` subpath.
+Prisma v7 requires `@prisma/adapter-pg` — no URL-only `PrismaClient` constructor.
 
 ```typescript
 // ✅ CORRECT
-import { PrismaClient } from '@/app/generated/prisma'
+import { PrismaClient } from '@/app/generated/prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+const prisma = new PrismaClient({ adapter })
 
 // ❌ WRONG — will fail
 import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/app/generated/prisma'  // no index.ts, fails resolution
+new PrismaClient()  // missing adapter — Prisma v7 requires it
 ```
+
+Seed config is in `prisma.config.ts migrations.seed`, NOT `package.json prisma.seed`.
+Migration URL must be `DIRECT_URL` (port 5432) in `prisma.config.ts datasource.url`.
+`url`/`directUrl` in `schema.prisma` datasource block are **removed** in Prisma v7.
 
 Always run `npx prisma generate` after schema changes.
 
