@@ -20,13 +20,13 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | REQUIREMENTS.md | ✅ Created |
 | ROADMAP.md | ✅ Created |
 | Phase 1 context | ✅ Captured (.planning/phases/01-data-layer/01-CONTEXT.md) |
-| Phase 1 plan | ❌ Not started |
+| Phase 1 plan | ✅ Written (01-A-PLAN.md, 01-B-PLAN.md, 01-C-PLAN.md) |
 
 ## Phase Progress
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | Data Layer — Prisma Schema, Migrations & Seed | 🔲 Not started |
+| 1 | Data Layer — Prisma Schema, Migrations & Seed | 📋 Planned (3 plans) |
 | 2 | Reservation API — Concurrency, Idempotency & CRUD | 🔲 Not started |
 | 3 | Expiry Sweeper — Vercel Cron & Reservation Cleanup | 🔲 Not started |
 | 4 | Product Listing UI — Stock Visibility | 🔲 Not started |
