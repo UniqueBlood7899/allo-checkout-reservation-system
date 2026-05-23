@@ -19,6 +19,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | codebase map | ✅ Created (.planning/codebase/) |
 | REQUIREMENTS.md | ✅ Created |
 | ROADMAP.md | ✅ Created |
+| Phase 1 context | ✅ Captured (.planning/phases/01-data-layer/01-CONTEXT.md) |
 | Phase 1 plan | ❌ Not started |
 
 ## Phase Progress
