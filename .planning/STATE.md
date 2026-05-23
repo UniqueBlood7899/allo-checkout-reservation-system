@@ -8,7 +8,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 
 **Current milestone:** Milestone 1 — Concurrency-Safe Reservation Engine v1
 
-**Current phase:** Phase 2 — Reservation API (ready to discuss/plan)
+**Current phase:** Phase 3 — Expiry Sweeper (Vercel Cron)
 
 ## Status
 
@@ -21,13 +21,15 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | ROADMAP.md | ✅ Created |
 | Phase 1 context | ✅ Captured (.planning/phases/01-data-layer/01-CONTEXT.md) |
 | Phase 1 execution | ✅ Complete (3/3 plans, all verified) |
+| Phase 2 context | ✅ Captured (.planning/phases/02-reservation-api/02-CONTEXT.md) |
+| Phase 2 execution | ✅ Complete (4/4 plans, all verified) |
 
 ## Phase Progress
 
 | Phase | Name | Status |
 |-------|------|--------|
 | 1 | Data Layer — Prisma Schema, Migrations & Seed | ✅ Complete |
-| 2 | Reservation API — Concurrency, Idempotency & CRUD | 🔲 Not started |
+| 2 | Reservation API — Concurrency, Idempotency & CRUD | ✅ Complete |
 | 3 | Expiry Sweeper — Vercel Cron & Reservation Cleanup | 🔲 Not started |
 | 4 | Product Listing UI — Stock Visibility | 🔲 Not started |
 | 5 | Checkout UI — Reservation Flow, Countdown & Error Handling | 🔲 Not started |
@@ -46,6 +48,13 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
   - Migration URL: use `DIRECT_URL` (port 5432) in `prisma.config.ts datasource.url`; app runtime passes `DATABASE_URL` via `PrismaPg` constructor
   - `url`/`directUrl` in `schema.prisma` datasource block are removed in v7
 - shadcn/ui not yet installed
+- **Phase 2 key facts (discovered in Phase 2 execution):**
+  - Redis client: `ioredis@^5.10.1` (not `@upstash/redis`) — use with `REDIS_URL` (Upstash TLS)
+  - Idempotency: `Idempotency-Key` header (lowercase in Next.js), 24h TTL via `redis.set(key, val, 'EX', 86400)`
+  - Prisma conflict errors: `P2034` (deadlock) and `P2028` (timeout) → 409 `RESERVATION_CONFLICT`
+  - `$queryRaw` requires quoted camelCase: `"reservedQty"` not `reservedQty` in raw SQL
+  - Belt-and-suspenders expiry: check `status !== 'pending'` → 409 first, then `expiresAt < new Date()` → 410
+  - APIs implemented: GET /api/products, GET /api/warehouses, POST /api/reservations, POST /api/reservations/:id/confirm, POST /api/reservations/:id/release
 
 ## Decisions Log
 
@@ -58,4 +67,4 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | Standard granularity (5 phases) | Initialization |
 
 ---
-*Last updated: 2026-05-24 — Phase 1 complete*
+*Last updated: 2026-05-24 — Phase 2 complete*
