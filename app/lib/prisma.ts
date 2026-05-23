@@ -5,7 +5,7 @@
 // Prisma v7 requires a Driver Adapter — no more URL-only PrismaClient constructor.
 // The app runtime uses DATABASE_URL (pooler, port 6543) — NOT DIRECT_URL.
 
-import { PrismaClient } from '@/app/generated/prisma'
+import { PrismaClient } from '@/app/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 const globalForPrisma = globalThis as unknown as {

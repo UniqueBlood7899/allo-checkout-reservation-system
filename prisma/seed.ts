@@ -4,7 +4,7 @@
 // Uses stable hardcoded IDs so upserts are deterministic — safe to run multiple times.
 // Seed data designed to cover all key inventory test scenarios (D-07, D-08).
 
-import { PrismaClient } from '../app/generated/prisma'
+import { PrismaClient } from '../app/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 function createClient(): PrismaClient {

@@ -5,6 +5,7 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
+    seed: "tsx prisma/seed.ts",
   },
   // Prisma v7: datasource.url is used by migrate/introspect commands.
   // Use DIRECT_URL (port 5432, direct Supabase connection) to bypass PgBouncer pooler,
