@@ -1,7 +1,8 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Minus, Plus, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
+import { X, Minus, Plus, CheckCircle, XCircle, AlertTriangle, ExternalLink } from 'lucide-react'
 import { ProductAvatar } from './ProductAvatar'
 import { StockPill } from './StockPill'
 import { CountdownTimer } from './CountdownTimer'
@@ -28,6 +29,7 @@ export function ReservationDrawer({
   onRelease,
   onExpired,
 }: ReservationDrawerProps) {
+  const router = useRouter()
   const isOpen = state.phase !== 'idle'
   const { product, warehouseId, qty, reservation, phase, errorMessage } = state
 
@@ -284,16 +286,20 @@ export function ReservationDrawer({
                 </div>
               )}
 
-              {/* Active: confirm + release */}
+              {/* Active: Go to Checkout + Cancel */}
               {phase === 'active' && (
                 <>
                   <motion.button
                     whileTap={{ scale: 0.97 }}
-                    onClick={onConfirm}
+                    onClick={() => {
+                      if (reservation?.id) {
+                        router.push(`/checkout/${reservation.id}`)
+                      }
+                    }}
                     className="w-full btn-reserve py-3 flex items-center justify-center gap-2"
                   >
-                    <CheckCircle className="w-4 h-4" />
-                    Confirm Payment
+                    <ExternalLink className="w-4 h-4" />
+                    Go to Checkout
                   </motion.button>
                   <button
                     onClick={onRelease}
