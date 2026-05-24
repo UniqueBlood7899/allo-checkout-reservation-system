@@ -1,3 +1,18 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: 03
+status: unknown
+last_updated: "2026-05-23T22:15:44.303Z"
+progress:
+  total_phases: 5
+  completed_phases: 0
+  total_plans: 9
+  completed_plans: 2
+  percent: 0
+---
+
 # Project State
 
 ## Project Reference
@@ -8,7 +23,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 
 **Current milestone:** Milestone 1 — Concurrency-Safe Reservation Engine v1
 
-**Current phase:** Phase 3 — Expiry Sweeper (Vercel Cron)
+**Current phase:** 03
 
 ## Status
 
@@ -23,6 +38,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | Phase 1 execution | ✅ Complete (3/3 plans, all verified) |
 | Phase 2 context | ✅ Captured (.planning/phases/02-reservation-api/02-CONTEXT.md) |
 | Phase 2 execution | ✅ Complete (4/4 plans, all verified) |
+| Phase 3 context | ✅ Captured (.planning/phases/03-expiry-sweeper/03-CONTEXT.md) |
+| Phase 3 execution | ✅ Complete (2/2 plans, all verified) |
 
 ## Phase Progress
 
@@ -30,8 +47,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 |-------|------|--------|
 | 1 | Data Layer — Prisma Schema, Migrations & Seed | ✅ Complete |
 | 2 | Reservation API — Concurrency, Idempotency & CRUD | ✅ Complete |
-| 3 | Expiry Sweeper — Vercel Cron & Reservation Cleanup | 🔲 Not started |
-| 4 | Product Listing UI — Stock Visibility | 🔲 Not started |
+| 3 | Expiry Sweeper — Vercel Cron & Reservation Cleanup | ✅ Complete |
+| 4 | Product Listing UI — Stock Visibility | ◆ In Progress |
 | 5 | Checkout UI — Reservation Flow, Countdown & Error Handling | 🔲 Not started |
 
 ## Key Context for Next Session
@@ -55,6 +72,14 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
   - `$queryRaw` requires quoted camelCase: `"reservedQty"` not `reservedQty` in raw SQL
   - Belt-and-suspenders expiry: check `status !== 'pending'` → 409 first, then `expiresAt < new Date()` → 410
   - APIs implemented: GET /api/products, GET /api/warehouses, POST /api/reservations, POST /api/reservations/:id/confirm, POST /api/reservations/:id/release
+- **Phase 3 key facts (discovered in Phase 3 execution):**
+  - Sweeper: `app/lib/sweeper.ts` — `releaseExpiredReservations()` per-row transactions
+  - Cron route: `app/api/cron/release-expired/route.ts` — GET handler (Vercel sends GET)
+  - Auth: `Authorization: Bearer {CRON_SECRET}` — 401 for both missing and wrong
+  - If `CRON_SECRET` not set → 500 (not 401) with logged warning
+  - Vercel schedule: `vercel.json` with `"* * * * *"` (every minute)
+  - Tests: `tests/sweeper.test.ts` with Vitest (2 integration tests against real DB)
+  - vitest.config.ts must use `dotenv.config()` to load `.env` for integration tests
 
 ## Decisions Log
 
@@ -67,4 +92,4 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | Standard granularity (5 phases) | Initialization |
 
 ---
-*Last updated: 2026-05-24 — Phase 2 complete*
+*Last updated: 2026-05-24 — Phase 3 complete*
