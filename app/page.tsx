@@ -1,65 +1,111 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useCallback, useMemo } from 'react'
+import { Navbar } from '@/components/Navbar'
+import { MetricsStrip } from '@/components/MetricsStrip'
+import { ProductGrid } from '@/components/ProductGrid'
+import { ReservationDrawer } from '@/components/ReservationDrawer'
+import { useProducts } from '@/app/hooks/useProducts'
+import { useReservation } from '@/app/hooks/useReservation'
+import type { Product } from '@/app/hooks/useProducts'
+
+export default function HomePage() {
+  const { products, loading, error, refresh } = useProducts()
+  const {
+    state,
+    openDrawer,
+    closeDrawer,
+    setWarehouse,
+    setQty,
+    reserve,
+    confirm,
+    release,
+  } = useReservation(refresh)
+
+  const handleReserve = useCallback(
+    (product: Product, warehouseId: string) => {
+      openDrawer(product, warehouseId)
+    },
+    [openDrawer]
+  )
+
+  const handleExpired = useCallback(() => {
+    refresh()
+  }, [refresh])
+
+  // Compute live metrics
+  const { totalAvailable, totalWarehouses } = useMemo(() => {
+    const warehouseIds = new Set(
+      products.flatMap((p) => p.inventory.map((i) => i.warehouseId))
+    )
+    const available = products.reduce(
+      (sum, p) => sum + p.inventory.reduce((s, i) => s + i.availableQty, 0),
+      0
+    )
+    return { totalAvailable: available, totalWarehouses: warehouseIds.size }
+  }, [products])
+
+  // Optimistic UI state
+  const reservingProductId =
+    state.phase === 'reserving' ? (state.product?.id ?? null) : null
+  const reservedProductIds = useMemo(
+    () =>
+      new Set(
+        state.phase === 'active' && state.product ? [state.product.id] : []
+      ),
+    [state.phase, state.product]
+  )
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen flex flex-col" style={{ background: '#0B1020' }}>
+      <Navbar />
+
+      <MetricsStrip
+        totalProducts={products.length}
+        totalWarehouses={totalWarehouses}
+        totalAvailableItems={totalAvailable}
+        activeReservations={state.phase === 'active' ? 1 : 0}
+      />
+
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8">
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold" style={{ color: '#f8fafc' }}>
+              Available Inventory
+            </h1>
+            <p className="text-sm mt-1" style={{ color: '#94a3b8' }}>
+              Reserve a product to lock inventory for 10 minutes
+            </p>
+          </div>
+          {!loading && !error && products.length > 0 && (
+            <span className="text-xs flex-shrink-0 hidden sm:block" style={{ color: '#475569' }}>
+              {products.length} product{products.length !== 1 ? 's' : ''} · refreshes every 30s
+            </span>
+          )}
+        </div>
+
+        <ProductGrid
+          products={products}
+          loading={loading}
+          error={error}
+          onReserve={handleReserve}
+          onRetry={refresh}
+          reservingProductId={reservingProductId}
+          reservedProductIds={reservedProductIds}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
       </main>
+
+      <ReservationDrawer
+        state={state}
+        onClose={closeDrawer}
+        onSetWarehouse={setWarehouse}
+        onSetQty={setQty}
+        onReserve={reserve}
+        onConfirm={confirm}
+        onRelease={release}
+        onExpired={handleExpired}
+      />
     </div>
-  );
+  )
 }
