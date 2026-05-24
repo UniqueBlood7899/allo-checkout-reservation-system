@@ -37,7 +37,8 @@ Reservations follow a strict state machine:
 ### 4. The "Belt-and-Suspenders" Expiry
 Expiry is handled in two layers to ensure no item is held indefinitely:
 - **Active Layer:** The UI and API check `expiresAt` on every request.
-- **Passive Layer:** A Vercel Cron job runs every minute, identifying and releasing all `pending` reservations that have passed their expiry time.
+- **Passive Layer:** A Vercel Cron job runs daily (on Hobby plan), identifying and releasing all `pending` reservations that have passed their expiry time.
+  - *Note: This can be easily increased to every minute on Vercel Pro or an on-prem server to ensure more rapid inventory recovery.*
 
 ## 🚦 Getting Started
 
