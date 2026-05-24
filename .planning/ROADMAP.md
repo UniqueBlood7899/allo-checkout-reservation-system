@@ -62,7 +62,7 @@
 **Requirements:** EXP-01, EXP-02, EXP-03, EXP-04
 
 **Success Criteria:**
-1. `POST /api/cron/release-expired` atomically releases all `pending` reservations with `expiresAt < now()`
+1. `GET /api/cron/release-expired` atomically releases all `pending` reservations with `expiresAt < now()`
 2. Released reservations have `reservedQty` correctly restored on their inventory rows
 3. Endpoint rejects requests without valid `CRON_SECRET` header (returns 401)
 4. `vercel.json` configures the cron job to run every minute
@@ -71,8 +71,8 @@
 **Dependencies:** Phase 2
 
 **Plans:**
-- [ ] Plan A: `POST /api/cron/release-expired` with batch transaction sweep
-- [ ] Plan B: `vercel.json` cron config + `CRON_SECRET` environment variable setup
+- [x] 03-01-PLAN.md — Core Expiry Logic and API Endpoint
+- [ ] 03-02-PLAN.md — Vercel Cron Configuration
 
 ---
 

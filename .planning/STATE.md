@@ -40,6 +40,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | Phase 2 execution | ✅ Complete (4/4 plans, all verified) |
 | Phase 3 context | ✅ Captured (.planning/phases/03-expiry-sweeper/03-CONTEXT.md) |
 | Phase 3 execution | ✅ Complete (2/2 plans, all verified) |
+| Phase 4 context | ✅ Captured (.planning/phases/04-product-listing-ui/04-CONTEXT.md) |
+| Phase 4 execution | ✅ Complete (5/5 plans, all verified) |
 
 ## Phase Progress
 
@@ -48,7 +50,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | 1 | Data Layer — Prisma Schema, Migrations & Seed | ✅ Complete |
 | 2 | Reservation API — Concurrency, Idempotency & CRUD | ✅ Complete |
 | 3 | Expiry Sweeper — Vercel Cron & Reservation Cleanup | ✅ Complete |
-| 4 | Product Listing UI — Stock Visibility | ◆ In Progress |
+| 4 | Product Listing UI — Stock Visibility | ✅ Complete |
 | 5 | Checkout UI — Reservation Flow, Countdown & Error Handling | 🔲 Not started |
 
 ## Key Context for Next Session
