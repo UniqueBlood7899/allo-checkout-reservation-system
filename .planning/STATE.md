@@ -46,6 +46,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | Phase 5 execution | ✅ Complete (3/3 plans, all verified) |
 | Phase 6 context | ✅ Captured (.planning/phases/06-idempotency-tests/) |
 | Phase 6 execution | ✅ Complete (3/3 plans, 11/11 tests passing) |
+| Phase 7 context | ✅ Captured (.planning/phases/07-premium-seed/) |
+| Phase 7 execution | ✅ Complete (3/3 plans — 100 products, 4 warehouses, 10-category icons) |
 
 ## Phase Progress
 
@@ -57,6 +59,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | 4 | Product Listing UI — Stock Visibility | ✅ Complete |
 | 5 | Checkout UI — Reservation Flow, Countdown & Error Handling | ✅ Complete |
 | 6 | Idempotency — Integration Tests & Hardening | ✅ Complete |
+| 7 | Premium Seed Catalog — Realistic Inventory Data | ✅ Complete |
 
 ## Key Context for Next Session
 
