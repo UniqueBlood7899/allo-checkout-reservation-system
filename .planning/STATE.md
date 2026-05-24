@@ -23,7 +23,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 
 **Current milestone:** Milestone 1 — Concurrency-Safe Reservation Engine v1
 
-**Current phase:** Phase 5 — Complete ✅ (All phases done)
+**Current phase:** Phase 6 — Complete ✅ (All phases done — Milestone 1 complete)
 
 ## Status
 
@@ -44,6 +44,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | Phase 4 execution | ✅ Complete (5/5 plans, all verified) |
 | Phase 5 context | ✅ Captured (.planning/phases/05-checkout-ui/05-B-PLAN.md) |
 | Phase 5 execution | ✅ Complete (3/3 plans, all verified) |
+| Phase 6 context | ✅ Captured (.planning/phases/06-idempotency-tests/) |
+| Phase 6 execution | ✅ Complete (3/3 plans, 11/11 tests passing) |
 
 ## Phase Progress
 
@@ -54,6 +56,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-23)
 | 3 | Expiry Sweeper — Vercel Cron & Reservation Cleanup | ✅ Complete |
 | 4 | Product Listing UI — Stock Visibility | ✅ Complete |
 | 5 | Checkout UI — Reservation Flow, Countdown & Error Handling | ✅ Complete |
+| 6 | Idempotency — Integration Tests & Hardening | ✅ Complete |
 
 ## Key Context for Next Session
 
