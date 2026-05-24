@@ -123,6 +123,30 @@
 
 ---
 
+### Phase 6: Idempotency — Integration Tests & Hardening
+
+**Goal:** Validate and harden the Redis-backed idempotency layer already implemented in Phase 2. Add dedicated integration tests that verify deduplication correctness, graceful Redis degradation, TTL behavior, and correct replay under concurrent retries.
+
+**Requirements:** IDEM-01, IDEM-02, IDEM-03, IDEM-04
+
+**Success Criteria:**
+1. Sending the same `Idempotency-Key` twice returns identical `{id, status, qty, expiresAt}` on both requests
+2. Second call does NOT create a new Reservation row (DB count stays the same)
+3. Redis failure (mocked) causes the request to proceed normally — no 500 returned
+4. Different `Idempotency-Key` values on same product/warehouse create distinct reservations
+5. Missing `Idempotency-Key` header still works (key is optional — no regression)
+6. Redis key has correct TTL (≤86400s) after first successful reservation
+7. All tests pass with `npm run test`
+
+**Dependencies:** Phase 2 (idempotency implementation), Phase 3 (test infrastructure)
+
+**Plans:**
+- [ ] Plan A: Idempotency integration tests (`tests/idempotency.test.ts`)
+- [ ] Plan B: Redis degradation test + TTL assertion
+- [ ] Plan C: Concurrent retry stress test (parallel identical requests)
+
+---
+
 ## Backlog (Future Milestones)
 
 - User authentication and session-scoped reservations
