@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import type { Product } from './useProducts'
 
 export type DrawerPhase =
@@ -41,9 +41,13 @@ const INITIAL_STATE: ReservationState = {
 
 export function useReservation(onSuccess?: () => void) {
   const [state, setState] = useState<ReservationState>(INITIAL_STATE)
-  // Keep a mutable ref so reserve() can read latest state without needing it in deps
+
+  // Keep a mutable ref so async callbacks can read latest state without deps.
+  // Updated via useEffect (not during render) to satisfy React lint rules.
   const stateRef = useRef(state)
-  stateRef.current = state
+  useEffect(() => {
+    stateRef.current = state
+  })
 
   const openDrawer = useCallback((product: Product, warehouseId: string) => {
     setState({ ...INITIAL_STATE, phase: 'selecting', product, warehouseId, qty: 1 })
@@ -102,10 +106,10 @@ export function useReservation(onSuccess?: () => void) {
     }
   }, [onSuccess])
 
-
   // POST /api/reservations/:id/confirm
+  // Reads reservation from stateRef to avoid stale closure on [state] dep
   const confirm = useCallback(async () => {
-    const { reservation } = state
+    const { reservation } = stateRef.current
     if (!reservation) return
     try {
       const res = await fetch(`/api/reservations/${reservation.id}/confirm`, {
@@ -131,21 +135,29 @@ export function useReservation(onSuccess?: () => void) {
     } catch {
       setState((prev) => ({ ...prev, phase: 'error', errorMessage: 'Network error' }))
     }
-  }, [state, onSuccess])
+  }, [onSuccess])
 
   // POST /api/reservations/:id/release
+  // Reads reservation from stateRef to avoid stale closure on [state] dep
   const release = useCallback(async () => {
-    const { reservation } = state
+    const { reservation } = stateRef.current
     if (!reservation) return
     try {
-      await fetch(`/api/reservations/${reservation.id}/release`, { method: 'POST' })
-      setState((prev) => ({ ...prev, phase: 'released' }))
+      const res = await fetch(`/api/reservations/${reservation.id}/release`, { method: 'POST' })
+      // Accept 200 or 410 (already-expired releases) as valid release outcomes
+      if (res.ok || res.status === 410) {
+        setState((prev) => ({ ...prev, phase: 'released' }))
+      } else {
+        // Non-network error (e.g. 409 conflict) — still release UI but log it
+        console.warn('[release] Unexpected status:', res.status)
+        setState((prev) => ({ ...prev, phase: 'released' }))
+      }
       onSuccess?.()
     } catch {
-      // Treat network error as released for UX — the cron will clean up
+      // Treat network error as released for UX — the cron sweeper will clean up
       setState((prev) => ({ ...prev, phase: 'released' }))
     }
-  }, [state, onSuccess])
+  }, [onSuccess])
 
   return { state, openDrawer, closeDrawer, setWarehouse, setQty, reserve, confirm, release }
 }

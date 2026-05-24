@@ -18,7 +18,6 @@ export default function HomePage() {
     setWarehouse,
     setQty,
     reserve,
-    confirm,
     release,
   } = useReservation(refresh)
 
@@ -102,7 +101,6 @@ export default function HomePage() {
         onSetWarehouse={setWarehouse}
         onSetQty={setQty}
         onReserve={reserve}
-        onConfirm={confirm}
         onRelease={release}
         onExpired={handleExpired}
       />

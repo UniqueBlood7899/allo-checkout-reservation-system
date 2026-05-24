@@ -4,7 +4,7 @@ import { motion, type Variants } from 'framer-motion'
 import { DollarSign, ChevronRight } from 'lucide-react'
 import { ProductAvatar } from './ProductAvatar'
 import { WarehouseBar } from './WarehouseBar'
-import { StockPill, getStockLevel } from './StockPill'
+import { StockPill } from './StockPill'
 import type { Product } from '@/app/hooks/useProducts'
 
 interface ProductCardProps {

@@ -14,7 +14,6 @@ interface ReservationDrawerProps {
   onSetWarehouse: (id: string) => void
   onSetQty: (qty: number) => void
   onReserve: () => void
-  onConfirm: () => void
   onRelease: () => void
   onExpired: () => void
 }
@@ -25,7 +24,6 @@ export function ReservationDrawer({
   onSetWarehouse,
   onSetQty,
   onReserve,
-  onConfirm,
   onRelease,
   onExpired,
 }: ReservationDrawerProps) {

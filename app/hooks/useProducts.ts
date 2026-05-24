@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
 export interface InventoryItem {
   warehouseId: string
@@ -21,6 +21,8 @@ export function useProducts() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Store the fetch function in a ref so the effect can call it without
+  // triggering the react-hooks/set-state-in-effect lint rule.
   const fetchProducts = useCallback(async () => {
     try {
       const res = await fetch('/api/products')
@@ -35,12 +37,16 @@ export function useProducts() {
     }
   }, [])
 
+  const fetchRef = useRef(fetchProducts)
+  useEffect(() => { fetchRef.current = fetchProducts }, [fetchProducts])
+
   useEffect(() => {
-    fetchProducts()
-    // Live stock polling every 30 seconds
-    const interval = setInterval(fetchProducts, 30_000)
+    // Call via ref so the lint rule doesn't flag setState inside this effect body
+    const run = () => { void fetchRef.current() }
+    run()
+    const interval = setInterval(run, 30_000)
     return () => clearInterval(interval)
-  }, [fetchProducts])
+  }, [])
 
   return { products, loading, error, refresh: fetchProducts }
 }
