@@ -147,6 +147,31 @@
 
 ---
 
+### Phase 7: Premium Seed Catalog — Realistic Inventory Data
+
+**Goal:** Replace test fixtures with a curated 100-product catalog across 10 ecommerce categories, 4 specialized warehouses, and realistic uneven inventory distribution. Expand ProductAvatar to cover all 10 categories with intentional icon + gradient pairings.
+
+**Requirements:** DATA-07 (realistic seed), UI visual cohesion
+
+**Success Criteria:**
+1. `prisma/seed.ts` seeds exactly 100 products, 4 warehouses, ~300 inventory rows
+2. All 10 categories covered: audio, electronics, gaming, footwear, wearables, fitness, bags, peripherals, home-office, accessories
+3. `ProductAvatar` correctly maps all 10 categories to distinct icons + gradients
+4. Stock states represented: qty=1 (edge), low-stock ≤5, healthy 10–80, out-of-stock at one WH
+5. Warehouses specialize: NYC (audio/electronics), LAX (footwear/fitness), AUS (gaming/home-office), CHI (bags/accessories)
+6. `npx prisma db seed` completes without errors
+7. `GET /api/products` returns all 100 products with inventory
+8. UI shows all 3 stock badge states visually
+
+**Dependencies:** Phase 1 (schema), Phase 4 (ProductAvatar)
+
+**Plans:**
+- [ ] Plan A: Expand ProductAvatar to all 10 categories
+- [ ] Plan B: Rewrite prisma/seed.ts with full 100-product curated catalog
+- [ ] Plan C: Run seed, verify API, confirm UI renders all categories
+
+---
+
 ## Backlog (Future Milestones)
 
 - User authentication and session-scoped reservations
