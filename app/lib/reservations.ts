@@ -188,3 +188,33 @@ export async function releaseReservation(id: string) {
     })
   })
 }
+
+// ─── GET RESERVATION BY ID ────────────────────────────────────────────────────
+// Used by GET /api/reservations/:id — returns denormalized shape for checkout page
+export async function getReservationById(id: string) {
+  const reservation = await prisma.reservation.findUnique({
+    where: { id },
+    include: {
+      product: {
+        select: { id: true, name: true, sku: true, price: true, description: true },
+      },
+      warehouse: {
+        select: { id: true, name: true, location: true },
+      },
+    },
+  })
+
+  if (!reservation) {
+    throw new ReservationNotFoundError(`Reservation ${id} not found`)
+  }
+
+  return {
+    id: reservation.id,
+    status: reservation.status,
+    qty: reservation.qty,
+    expiresAt: reservation.expiresAt?.toISOString() ?? null,
+    createdAt: reservation.createdAt.toISOString(),
+    product: reservation.product,
+    warehouse: reservation.warehouse,
+  }
+}
